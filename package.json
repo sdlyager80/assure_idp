@@ -1,7 +1,7 @@
 {
   "name": "assure-idp",
   "version": "1.0.0",
-  "description": "Intelligent Document Processing Configuration Platform - Amazon Textract & ServiceNow Integration",
+  "description": "DXC Assure IDP - Intelligent Document Processing Configuration Platform - Amazon Textract & ServiceNow Integration",
   "type": "module",
   "scripts": {
     "dev": "vite",

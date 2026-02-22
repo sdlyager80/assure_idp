@@ -1,10 +1,11 @@
 # Assure IDP - Intelligent Document Processing Platform
 
-A modern, enterprise-grade React application for configuring and managing intelligent document processing workflows with Amazon Textract and ServiceNow integration.
+A modern, enterprise-grade React application for configuring and managing intelligent document processing workflows with Amazon Textract and ServiceNow integration. **Powered by DXC Technology.**
 
 ![Assure IDP](https://img.shields.io/badge/version-1.0.0-blue)
 ![React](https://img.shields.io/badge/React-18.3.1-61dafb)
 ![Material-UI](https://img.shields.io/badge/MUI-5.15-007fff)
+![DXC](https://img.shields.io/badge/DXC-Technology-4995FF)
 
 ## Overview
 
@@ -305,6 +306,23 @@ docker run -p 3000:3000 assure-idp
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
+
+## Documentation
+
+Additional documentation is available:
+
+- **[DXC Brand Guidelines Implementation](./DXC_BRANDING.md)** - DXC Technology brand colors, fonts, and logo usage
+- **[Project Summary](./PROJECT_SUMMARY.md)** - Complete feature overview and technical details
+- **[Architecture Guide](./ARCHITECTURE.md)** - System architecture and design decisions
+- **[Quick Start Guide](./QUICKSTART.md)** - Get up and running quickly
+
+### Branding
+
+This application follows the **DXC Technology Brand Guidelines (January 2026)**:
+- Official DXC color palette (`#4995FF`, `#004AAC`, `#FFC982`, etc.)
+- GT Standard L Extended typography
+- DXC logo and brand assets
+- See [DXC_BRANDING.md](./DXC_BRANDING.md) for complete details
 
 ## Contributing
 

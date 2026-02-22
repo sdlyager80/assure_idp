@@ -31,6 +31,7 @@ import {
   Logout,
   ViewList,
 } from '@mui/icons-material';
+import dxcLogo from '../../assets/images/dxc-logo.svg';
 
 const drawerWidth = 280;
 
@@ -72,17 +73,27 @@ export default function Layout({ children }) {
 
   const drawer = (
     <div>
-      <Toolbar sx={{ justifyContent: 'center', py: 2 }}>
+      <Toolbar sx={{ justifyContent: 'center', py: 3, flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ width: '140px', display: 'flex', justifyContent: 'center' }}>
+          <img
+            src={dxcLogo}
+            alt="DXC Technology"
+            style={{ width: '100%', height: 'auto' }}
+          />
+        </Box>
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h5" fontWeight="bold" color="primary">
+          <Typography variant="h6" fontWeight="bold" color="text.primary" sx={{ mb: 0.5 }}>
             Assure IDP
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+            Intelligent Document Processing
           </Typography>
           <Chip
             label="v1.0.0"
             size="small"
             color="primary"
             variant="outlined"
-            sx={{ mt: 0.5, fontSize: '0.7rem' }}
+            sx={{ fontSize: '0.7rem' }}
           />
         </Box>
       </Toolbar>

@@ -1,29 +1,30 @@
 import { createTheme } from '@mui/material/styles';
 
+// DXC Brand Colors (2026 Guidelines)
 const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1976d2',
-      light: '#42a5f5',
-      dark: '#1565c0',
-      contrastText: '#fff',
+      main: '#4995FF',      // DXC Medium Blue
+      light: '#A1E6FF',     // DXC Light Blue
+      dark: '#004AAC',      // DXC Deep Blue
+      contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#9c27b0',
-      light: '#ba68c8',
-      dark: '#7b1fa2',
-      contrastText: '#fff',
+      main: '#FFC982',      // DXC Orange/Peach
+      light: '#FFE0B8',
+      dark: '#E5A860',
+      contrastText: '#0E1020',
     },
     success: {
-      main: '#2e7d32',
-      light: '#4caf50',
-      dark: '#1b5e20',
+      main: '#4caf50',
+      light: '#81c784',
+      dark: '#388e3c',
     },
     warning: {
-      main: '#ed6c02',
-      light: '#ff9800',
-      dark: '#e65100',
+      main: '#FFC982',      // DXC Orange
+      light: '#FFE0B8',
+      dark: '#E5A860',
     },
     error: {
       main: '#d32f2f',
@@ -31,50 +32,63 @@ const theme = createTheme({
       dark: '#c62828',
     },
     info: {
-      main: '#0288d1',
-      light: '#03a9f4',
-      dark: '#01579b',
+      main: '#4995FF',      // DXC Medium Blue
+      light: '#A1E6FF',     // DXC Light Blue
+      dark: '#004AAC',
     },
     background: {
       default: '#f5f5f5',
-      paper: '#ffffff',
+      paper: '#FFFFFF',
+    },
+    text: {
+      primary: '#0E1020',   // DXC Dark Blue/Black
+      secondary: '#5A5A5A',
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"GT Standard L Extended", "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: '2.5rem',
-      fontWeight: 600,
+      fontWeight: 700,        // GT Standard L Extended Bold
       lineHeight: 1.2,
+      letterSpacing: '-0.02em',
     },
     h2: {
       fontSize: '2rem',
-      fontWeight: 600,
+      fontWeight: 700,        // GT Standard L Extended Bold
       lineHeight: 1.3,
+      letterSpacing: '-0.01em',
     },
     h3: {
       fontSize: '1.75rem',
-      fontWeight: 600,
+      fontWeight: 700,        // GT Standard L Extended Bold
       lineHeight: 1.4,
     },
     h4: {
       fontSize: '1.5rem',
-      fontWeight: 600,
+      fontWeight: 700,        // GT Standard L Extended Bold
       lineHeight: 1.4,
     },
     h5: {
       fontSize: '1.25rem',
-      fontWeight: 600,
+      fontWeight: 700,        // GT Standard L Extended Bold
       lineHeight: 1.5,
     },
     h6: {
       fontSize: '1rem',
-      fontWeight: 600,
+      fontWeight: 700,        // GT Standard L Extended Bold
       lineHeight: 1.5,
+    },
+    body1: {
+      fontWeight: 500,        // GT Standard L Extended Medium
+    },
+    body2: {
+      fontWeight: 500,        // GT Standard L Extended Medium
     },
     button: {
       textTransform: 'none',
-      fontWeight: 500,
+      fontWeight: 700,        // GT Standard L Extended Bold
+      letterSpacing: '0.02em',
     },
   },
   shape: {
