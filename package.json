@@ -21,8 +21,7 @@
     "notistack": "^3.0.1",
     "react-dropzone": "^14.2.3",
     "date-fns": "^3.6.0",
-    "recharts": "^2.12.3",
-    "react-json-view": "^1.21.3"
+    "recharts": "^2.12.3"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",
