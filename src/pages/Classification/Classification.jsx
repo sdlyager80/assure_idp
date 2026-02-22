@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   Box,
   Grid,
@@ -20,7 +20,9 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
   ListItemSecondaryAction,
+  LinearProgress,
 } from '@mui/material';
 import {
   Add,
@@ -30,9 +32,15 @@ import {
   CloudUpload,
   CheckCircle,
   Settings,
+  InsertDriveFile,
+  Close,
 } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 
 export default function Classification() {
+  const { enqueueSnackbar } = useSnackbar();
+  const fileInputRef = useRef(null);
+
   const [processorName, setProcessorName] = useState('');
   const [modelType, setModelType] = useState('supervised');
   const [confidenceThreshold, setConfidenceThreshold] = useState(85);
@@ -44,6 +52,8 @@ export default function Classification() {
   const [newCategory, setNewCategory] = useState('');
   const [autoRoute, setAutoRoute] = useState(true);
   const [enableOCR, setEnableOCR] = useState(true);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const handleAddCategory = () => {
     if (newCategory.trim()) {
@@ -73,6 +83,49 @@ export default function Classification() {
       autoRoute,
       enableOCR,
     });
+    enqueueSnackbar('Configuration saved successfully', { variant: 'success' });
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setUploading(true);
+
+    // Simulate upload process
+    setTimeout(() => {
+      const newFiles = files.map(file => ({
+        id: Date.now() + Math.random(),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadedAt: new Date().toISOString(),
+      }));
+
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      setUploading(false);
+      enqueueSnackbar(`${files.length} file(s) uploaded successfully`, { variant: 'success' });
+
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }, 1500);
+  };
+
+  const handleRemoveFile = (fileId) => {
+    setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
+    enqueueSnackbar('File removed', { variant: 'info' });
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
   return (
@@ -341,23 +394,73 @@ export default function Classification() {
                 Upload sample documents to improve classification accuracy
               </Typography>
 
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png,.tiff,.tif"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+              />
+
               <Button
                 fullWidth
                 variant="outlined"
                 startIcon={<CloudUpload />}
+                onClick={handleUploadClick}
+                disabled={uploading}
                 sx={{ mt: 2 }}
               >
-                Upload Training Set
+                {uploading ? 'Uploading...' : 'Upload Training Set'}
               </Button>
+
+              {uploading && (
+                <LinearProgress sx={{ mt: 2 }} />
+              )}
+
+              {uploadedFiles.length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2" fontWeight="medium" gutterBottom>
+                    Uploaded Files ({uploadedFiles.length}):
+                  </Typography>
+                  <List dense sx={{ maxHeight: 200, overflow: 'auto', bgcolor: 'background.default', borderRadius: 1 }}>
+                    {uploadedFiles.map((file) => (
+                      <ListItem key={file.id}>
+                        <ListItemIcon>
+                          <InsertDriveFile fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={file.name}
+                          secondary={formatFileSize(file.size)}
+                          primaryTypographyProps={{ variant: 'body2', noWrap: true }}
+                        />
+                        <ListItemSecondaryAction>
+                          <IconButton
+                            edge="end"
+                            size="small"
+                            onClick={() => handleRemoveFile(file.id)}
+                          >
+                            <Close fontSize="small" />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
 
               <Box sx={{ mt: 2, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Current Training Set:
+                  Total Training Set:
                 </Typography>
                 <Typography variant="body2" fontWeight="medium">
-                  324 documents
+                  {324 + uploadedFiles.length} documents
                 </Typography>
               </Box>
+
+              <Alert severity="info" sx={{ mt: 2 }}>
+                Supported formats: PDF, JPG, PNG, TIFF (Max 10MB per file)
+              </Alert>
             </CardContent>
           </Card>
         </Grid>

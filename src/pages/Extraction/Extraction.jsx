@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useSnackbar } from 'notistack';
 import {
   Box,
   Grid,
@@ -14,6 +15,8 @@ import {
   Chip,
   IconButton,
   Divider,
+  ListItemIcon,
+  LinearProgress,
   Switch,
   FormControlLabel,
   Alert,
@@ -32,6 +35,8 @@ import {
   Add,
   Delete,
   Save,
+  Close,
+  InsertDriveFile,
   PlayArrow,
   ExpandMore,
   CheckCircle,
@@ -39,10 +44,15 @@ import {
 } from '@mui/icons-material';
 
 export default function Extraction() {
+  const { enqueueSnackbar } = useSnackbar();
+  const fileInputRef = useRef(null);
+
   const [processorName, setProcessorName] = useState('');
   const [documentType, setDocumentType] = useState('acord');
   const [extractionMethod, setExtractionMethod] = useState('form');
   const [enableValidation, setEnableValidation] = useState(true);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const [fields, setFields] = useState([
     { id: 1, name: 'policy_number', label: 'Policy Number', type: 'text', required: true, validation: 'regex', pattern: '^[A-Z]{2}-\\d{6}$' },
     { id: 2, name: 'insured_name', label: 'Insured Name', type: 'text', required: true, validation: 'none' },
@@ -82,6 +92,47 @@ export default function Extraction() {
       enableValidation,
       fields,
     });
+    enqueueSnackbar('Configuration saved successfully', { variant: 'success' });
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setUploading(true);
+
+    setTimeout(() => {
+      const newFiles = files.map(file => ({
+        id: Date.now() + Math.random(),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadedAt: new Date().toISOString(),
+      }));
+
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      setUploading(false);
+      enqueueSnackbar(`${files.length} test document(s) uploaded`, { variant: 'success' });
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }, 1500);
+  };
+
+  const handleRemoveFile = (fileId) => {
+    setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
+    enqueueSnackbar('File removed', { variant: 'info' });
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
   return (
@@ -401,14 +452,62 @@ export default function Extraction() {
                 </Box>
               </Box>
 
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png,.tiff,.tif"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+              />
+
               <Button
                 fullWidth
                 variant="outlined"
                 startIcon={<CloudUpload />}
+                onClick={handleUploadClick}
+                disabled={uploading}
                 sx={{ mt: 2 }}
               >
-                Upload Test Documents
+                {uploading ? 'Uploading...' : 'Upload Test Documents'}
               </Button>
+
+              {uploading && (
+                <LinearProgress sx={{ mt: 2 }} />
+              )}
+
+              {uploadedFiles.length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2" fontWeight="medium" gutterBottom>
+                    Uploaded Files ({uploadedFiles.length}):
+                  </Typography>
+                  <List dense sx={{ maxHeight: 200, overflow: 'auto', bgcolor: 'background.default', borderRadius: 1 }}>
+                    {uploadedFiles.map((file) => (
+                      <ListItem key={file.id}>
+                        <ListItemIcon>
+                          <InsertDriveFile fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={file.name}
+                          secondary={formatFileSize(file.size)}
+                          primaryTypographyProps={{ variant: 'body2', noWrap: true }}
+                        />
+                        <IconButton
+                          edge="end"
+                          size="small"
+                          onClick={() => handleRemoveFile(file.id)}
+                        >
+                          <Close fontSize="small" />
+                        </IconButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
+
+              <Alert severity="info" sx={{ mt: 2 }}>
+                Supported formats: PDF, JPG, PNG, TIFF (Max 10MB per file)
+              </Alert>
             </CardContent>
           </Card>
         </Grid>
