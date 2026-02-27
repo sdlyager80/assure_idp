@@ -67,7 +67,7 @@ export default function Testing() {
     onDrop,
     accept: ACCEPTED_TYPES,
     maxFiles: 1,
-    maxSize: 5 * 1024 * 1024,
+    maxSize: 3 * 1024 * 1024,
   });
 
   const handleModeChange = (_, newMode) => {
@@ -178,7 +178,7 @@ export default function Testing() {
                     {isDragActive ? 'Drop it here' : 'Drag & drop or click to upload'}
                   </Typography>
                   <Typography variant="caption" color="text.disabled">
-                    PDF, PNG, JPG — max 5MB
+                    PDF, PNG, JPG — max 3MB
                   </Typography>
                 </Box>
 

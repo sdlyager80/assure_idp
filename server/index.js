@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.SERVER_PORT || 3001;
 
 app.use(cors({ origin: 'http://localhost:3000' }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/textract', textractRoutes);
 
