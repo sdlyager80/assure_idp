@@ -14,6 +14,7 @@ import {
   FormControlLabel,
   Tabs,
   Tab,
+  CircularProgress,
 } from '@mui/material';
 import {
   Save,
@@ -23,6 +24,7 @@ import {
   Storage,
   Refresh,
 } from '@mui/icons-material';
+import { checkConnection } from '../../services/textractService';
 
 function TabPanel({ children, value, index }) {
   return value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null;
@@ -30,7 +32,9 @@ function TabPanel({ children, value, index }) {
 
 export default function Integration() {
   const [activeTab, setActiveTab] = useState(0);
-  const [textractConnected, setTextractConnected] = useState(true);
+  const [textractConnected, setTextractConnected] = useState(null);
+  const [textractTesting, setTextractTesting] = useState(false);
+  const [textractError, setTextractError] = useState(null);
   const [snowConnected, setSnowConnected] = useState(true);
 
   // Textract settings
@@ -45,9 +49,19 @@ export default function Integration() {
   const [snowClientId, setSnowClientId] = useState('');
   const [snowClientSecret, setSnowClientSecret] = useState('');
 
-  const handleTestTextract = () => {
-    console.log('Testing Textract connection...');
-    setTextractConnected(true);
+  const handleTestTextract = async () => {
+    setTextractTesting(true);
+    setTextractError(null);
+    try {
+      const result = await checkConnection();
+      setTextractConnected(result.connected);
+      if (!result.connected) setTextractError(result.error);
+    } catch (err) {
+      setTextractConnected(false);
+      setTextractError(err.response?.data?.error || err.message);
+    } finally {
+      setTextractTesting(false);
+    }
   };
 
   const handleTestServiceNow = () => {
@@ -84,20 +98,14 @@ export default function Integration() {
                 <Typography variant="h6" fontWeight="bold">
                   AWS Textract Connection
                 </Typography>
-                {textractConnected ? (
-                  <Chip
-                    icon={<CheckCircle />}
-                    label="Connected"
-                    color="success"
-                    size="small"
-                  />
-                ) : (
-                  <Chip
-                    icon={<Error />}
-                    label="Disconnected"
-                    color="error"
-                    size="small"
-                  />
+                {textractConnected === true && (
+                  <Chip icon={<CheckCircle />} label="Connected" color="success" size="small" />
+                )}
+                {textractConnected === false && (
+                  <Chip icon={<Error />} label="Disconnected" color="error" size="small" />
+                )}
+                {textractConnected === null && (
+                  <Chip label="Not tested" size="small" variant="outlined" />
                 )}
               </Box>
               <Divider />
@@ -162,19 +170,25 @@ export default function Integration() {
                   </Button>
                   <Button
                     variant="outlined"
-                    startIcon={<Refresh />}
+                    startIcon={textractTesting ? <CircularProgress size={16} /> : <Refresh />}
                     onClick={handleTestTextract}
+                    disabled={textractTesting}
                   >
-                    Test Connection
+                    {textractTesting ? 'Testing…' : 'Test Connection'}
                   </Button>
                 </Box>
               </Grid>
 
-              {textractConnected && (
+              {textractConnected === true && (
                 <Grid item xs={12}>
                   <Alert severity="success">
                     Successfully connected to Amazon Textract in region {awsRegion}
                   </Alert>
+                </Grid>
+              )}
+              {textractConnected === false && textractError && (
+                <Grid item xs={12}>
+                  <Alert severity="error">{textractError}</Alert>
                 </Grid>
               )}
             </Grid>
